@@ -1,0 +1,18 @@
+{
+    "dependencies": {
+        "chromedriver": "^2.45.0",
+        "js-size": "^2.1.7",
+        "log4js": "",
+        "nodemon": "^1.18.7",
+        "phantomjs": "",
+        "promise": "",
+        "selenium-webdriver": "^4.0.0-alpha.1",
+        "size": "^1.0.0",
+        "system-sleep": "^1.3.6",
+        "webdriverio": "^4.14.1"
+    },
+    "scripts": {
+        "start": "nodemon bot.js"
+    },
+    "devDependencies": {}
+}
