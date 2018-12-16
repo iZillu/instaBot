@@ -30,7 +30,7 @@ const max = 70;
 
 // var browser = new webdriver.Builder().forBrowser('chrome').withCapabilities(capabilities).build();
 
-const CHROME_BIN_PATH = '/Users/hmuravch/goinfre/Google\ Chrome.app/Contents/MacOS/Google\ Chrome';
+const CHROME_BIN_PATH = '/Users/hmuravch/Desktop/Google\ Chrome.app/Contents/MacOS/Google\ Chrome';
 
 const options = new chromeDriver.Options();
 options.setChromeBinaryPath(CHROME_BIN_PATH);
@@ -86,11 +86,15 @@ var browser = new webdriver.Builder()
 				await browser.findElement(By.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]")).click();
 				while (1)
 				{
-					await browser.wait(until.elementLocated(By.className("coreSpriteRightChevron")), 2000);
-					await browser.findElement(By.className("coreSpriteRightChevron")).click();
-					browser.findElement(By.xpath("//button[@type='button']")).isDisplayed();
-					if ()
-						break ;
+					await browser.wait(until.elementLocated(By.className("coreSpriteRightChevron")), 2000)
+					let check = await browser.findElement(By.className("coreSpriteRightChevron"));
+					check.click();
+					// try {
+					// if (browser.findElement(By.xpath("//button[@type='button']")).isDisplayed())
+					// 	break ;
+					// } catch (err) {
+					// 	console.log(err);
+					// }
 					// await sleep(random.randomInteger(min, max));
 					// let check = await browser.findElement(By.className("coreSpriteRightChevron"));
 					// const check = await browser.findElement(By.className("coreSpriteRightChevron"));
