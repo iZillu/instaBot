@@ -12,24 +12,6 @@ const sleep = require('system-sleep');
 const min = 30;
 const max = 70;
 	
-
-
-// const chrome = require('selenium-webdriver/chrome');
-// let options = new chrome.Options()
-// options.addArguments("--no-sandbox", "--disable-gpu", "--headless", "--remote-debugging-port=")
-// let browser = new webdriver.Builder()
-// .withCapabilities(webdriver.Capabilities.chrome())
-// .setChromeOptions(options)
-// .build();
-
-// var capabilities = webdriver.Capabilities.chrome();
-
-// capabilities.set('chromeOptions', {
-//       'args': ['--disable-plugins']
-// });
-
-// var browser = new webdriver.Builder().forBrowser('chrome').withCapabilities(capabilities).build();
-
 const CHROME_BIN_PATH = '/Users/hmuravch/Desktop/Google\ Chrome.app/Contents/MacOS/Google\ Chrome';
 
 const options = new chromeDriver.Options();
@@ -49,64 +31,51 @@ var browser = new webdriver.Builder()
 //  но это будет потом )))
 */
 
-// const logIn = async () => {
-// 	try { 
-// 		await browser.get('https://www.instagram.com/accounts/login/');
-// 		await browser.findElement(By.name('username')).sendKeys(settings.bot_log);
-// 		await browser.findElement(By.name('password')).sendKeys(settings.bot_pass);
-// 		await browser.findElement(By.xpath("//button[contains(@type,'submit')]")).click();
-// 		await console.log("Loged in");
-// 	} catch (err) {
-// 		console.log ("Log in failed");
-// 	}
-// }
-
-// logIn();
-
 (async function () {
 	try {
 		await browser.get('https://www.instagram.com/accounts/login/');
-		let button = await browser.wait(until.elementLocated(By.name('username')), 5000);
+		let button = await browser.wait(until.elementLocated(By.name('username')), 10000);
 		await button.sendKeys(settings.bot_log);
 		await browser.findElement(By.name('password')).sendKeys(settings.bot_pass);
 		await browser.findElement(By.xpath("//button[contains(@type,'submit')]")).click();
+		await browser.wait(until.elementLocated(By.className('piCib')), 10000);
 		await console.log("Loged in");
-
 		for (let i = 0; settings.hashtags[i]; i++)
 		{
-			await browser.wait(until.elementLocated(By.className('piCib')), 5000);
-			// let btn = await browser.wait(until.elementLocated(By.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]")), 5000);
-			// await btn.click();
-			await console.log("start wathing stories");
-			for (let story = 0; story < 2; story++)
+			for (let story = 1; story < 3; story++)
 			{
 				await browser.get("https://www.instagram.com/explore/tags/" + settings.hashtags[i]);
 				await console.log("search " + settings.hashtags[i]);
-				await browser.wait(until.elementLocated(By.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]")), 5000);
-				await browser.findElement(By.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]")).click();
+				const btn = await browser.wait(until.elementLocated(By
+					.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]")), 10000)
+					.then( elem => {
+						return browser.wait(until.elementIsVisible(elem), 10000);
+					})
+				await btn.click();
+				await console.log("start wathing stories");
 				while (1)
 				{
-					await browser.wait(until.elementLocated(By.className("coreSpriteRightChevron")), 2000)
-					let check = await browser.findElement(By.className("coreSpriteRightChevron"));
-					check.click();
-					// try {
-					// if (browser.findElement(By.xpath("//button[@type='button']")).isDisplayed())
-					// 	break ;
-					// } catch (err) {
-					// 	console.log(err);
-					// }
-					// await sleep(random.randomInteger(min, max));
-					// let check = await browser.findElement(By.className("coreSpriteRightChevron"));
-					// const check = await browser.findElement(By.className("coreSpriteRightChevron"));
-					// console.log(check.isDisplayed());
-					// console.log(check);
-					// if (check.isDisplayed())
-					// await check.click();
-					// else
-					// 	break ;
-					// sleep(300);
+					const arrow = await browser.wait(until.elementLocated(By
+						.className("coreSpriteRightChevron")), 10000);
+					await arrow.click();
+					var check = await browser.findElement(
+						By.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]"))
+						.then(() => {
+						return true;
+					}, (err) => {
+						if (err instanceof webdriver.error.NoSuchElementError) {
+							return false;
+						} else {
+							webdriver.promise.rejected(err);
+						}
+					});
+					if (check)
+						break ;
 				}
-				console.log("reload " + story + " times");
+				if (story == 1)
+					console.log("reload page " + story + " time");
+				else
+					console.log("reload page " + story + " times");
 			}
 		}
 		browser.quit();
