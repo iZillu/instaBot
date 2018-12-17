@@ -37,7 +37,7 @@ var browser = new webdriver.Builder()
 		let button = await browser.wait(until.elementLocated(By.name('username')), 10000);
 		await button.sendKeys(settings.bot_log);
 		await browser.findElement(By.name('password')).sendKeys(settings.bot_pass);
-		await browser.findElement(By.xpath("//button[contains(@type,'submit')]")).click();
+		await browser.findElement(By.css("button[type='submit']")).click();
 		await browser.wait(until.elementLocated(By.className('piCib')), 10000);
 		await console.log("Loged in");
 		for (let i = 0; settings.hashtags[i]; i++)
