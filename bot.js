@@ -46,20 +46,17 @@ var browser = new webdriver.Builder()
 			{
 				await browser.get("https://www.instagram.com/explore/tags/" + settings.hashtags[i]);
 				await console.log("search " + settings.hashtags[i]);
-				const btn = await browser.wait(until.elementLocated(By
-					.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]")), 10000)
+				const btn = await browser.wait(until.elementLocated(By.css("div > img._7A2D8")), 10000)
 					.then( elem => {
 						return browser.wait(until.elementIsVisible(elem), 10000);
-					})
+					})		
 				await btn.click();
 				await console.log("start wathing stories");
 				while (1)
 				{
-					const arrow = await browser.wait(until.elementLocated(By
-						.className("coreSpriteRightChevron")), 10000);
+					const arrow = await browser.wait(until.elementLocated(By.css(".coreSpriteRightChevron")), 10000);
 					await arrow.click();
-					var check = await browser.findElement(
-						By.xpath("/html[1]/body[1]/span[1]/section[1]/main[1]/header[1]/div[1]/div[1]/div[1]"))
+					var check = await browser.findElement(By.css("div > img._7A2D8"))
 						.then(() => {
 						return true;
 					}, (err) => {
