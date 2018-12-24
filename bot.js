@@ -18,8 +18,8 @@ const CHROME_BIN_PATH = '/Users/hmuravch/Desktop/Google\ Chrome.app/Contents/Mac
 const options = new chromeDriver.Options();
 options.setChromeBinaryPath(CHROME_BIN_PATH);
 options.addArguments(
-	// 'disable-gpu',
-	// 'headless',
+	// 'disable-gpu', // вырубает граф. движок, хуй знает зачем 
+	// 'headless',    // по идее браузер работает в фоновом режиме (нет)
 );
 
 var browser = new webdriver.Builder()
@@ -52,19 +52,54 @@ async function watchStories() {
 	try {
 		for (let i = 0; settings.hashtags[i]; i++)
 		{
-			for (let story = 1; story < 3; story++)
+			await console.log("searching '#" + settings.hashtags[i] + "'");
+			await browser.get("https://www.instagram.com/explore/tags/" + settings.hashtags[i]);
+			for (let story = 1; story < 8; story++)
 			{
-				await console.log("search " + settings.hashtags[i]);
-				await browser.get("https://www.instagram.com/explore/tags/" + settings.hashtags[i]);
 				const btn = await browser.wait(until.elementLocated(By.css("div > img._7A2D8")), 10000)
-					.then( elem => {
-						return browser.wait(until.elementIsVisible(elem), 10000);
-					})		
+					.then( async elem => {
+						try {
+							const elem_1 = await browser.wait(until.elementIsVisible(elem), 10000)
+							.then((elem) => {
+								return elem;
+							}, (err) => {
+								if (err instanceof webdriver.error.TimeoutError) {
+									return false;
+								} else {
+									webdriver.promise.rejected(err);
+								}
+							});
+							return elem_1;
+						}
+						catch (err) {
+							if (err instanceof webdriver.error.TimeoutError) {
+								return false;
+							}
+							else {
+								webdriver.promise.rejected(err);
+							}
+						}
+					})
+				if (!btn) {
+					await browser.navigate().refresh();
+					continue ;
+				}
 				await btn.click();
 				await console.log("start wathing stories");
 				while (1)
 				{
-					const arrow = await browser.wait(until.elementLocated(By.css(".coreSpriteRightChevron")), 10000);
+					const arrow = await browser.wait(until.elementLocated(By.css(".coreSpriteRightChevron")), 3000)
+					.then((elem) => {
+						return elem;
+					}, (err) => {
+						if (err instanceof webdriver.error.TimeoutError) {
+							return false;
+						} else {
+							webdriver.promise.rejected(err);
+						}
+					});
+					if (!arrow)
+						break ;
 					await arrow.click();
 					var check = await browser.findElement(By.css("div > img._7A2D8"))
 						.then(() => {
@@ -83,6 +118,7 @@ async function watchStories() {
 					console.log("reload page " + story + " time");
 				else
 					console.log("reload page " + story + " times");
+				await browser.navigate().refresh();
 			}
 		}
 	} catch (err) {
@@ -90,12 +126,12 @@ async function watchStories() {
 	}
 };
 
-logIn().then( () => {
-	watchStories()
+logIn().then(() => watchStories()
 	.then(() => {
 		browser.quit();
+		console.log("finish");
 	})
-});
+);
 
 
 
